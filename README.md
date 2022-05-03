@@ -1,6 +1,7 @@
-## Robô de operações na IQ Option
+# Robô de operações na IQ Option
 
-# libs importantes
-===
-pip install iqoptionapi
-pip install rich
+## Libs importantes
+
+pip install iqoptionapi <br/>
+pip install rich <br/>
+### Precisa criar uma conta na iq Option!
