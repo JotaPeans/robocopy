@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from iqoptionapi.stable_api import IQ_Option
 from rich.console import Console
-from datetime import datetime
 import os
 import sys
 import time
