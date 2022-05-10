@@ -1,94 +1,95 @@
 from datetime import datetime, timedelta
 from iqoptionapi.stable_api import IQ_Option
-from rich.console import Console
-import os
 import sys
 import time
-import threading
-from getpass import getpass
-
-console = Console()
 
 class Robo:
     def __init__(self):    
-        os.system('cls')    
-        user = input("Email: ")
-        senha = getpass(prompt="Password: ")
-        self.API = IQ_Option(user, senha)
-        self.count = 0
-        self.timeframe = 5
-        self.Exit = threading.Event()
-        self.connect()
+        self.__operationMode = None #Real ou Practice -> str
+        self.__stop = None #True or False -> bool
+        self.__tend = None #True or False -> bool
+        self.__tendCandles = None #numero de velas para o calculo da tendencia -> int
+        self.__gale = None #0 - 1 - 2 -> int
+        self.__bancaINC = None #float
+        self.__amount = None #float
+        self.__StopWIN = None #float or percent
+        self.__StopLOSS = None #float or percent
+        self.__payout = None #porcentagem
 
+    @property
+    def operationMode(self) -> str:
+        return self.__operationMode
 
-    def corrigir_sinais(self):
-        file = open('sinais.txt', encoding='UTF-8')
-        lista = file.read()
-        file.close
+    @operationMode.setter
+    def operationMode(self, mode:str):
+        self.__operationMode = mode
 
-        lista = lista.split('\n')
+    @property
+    def stop(self) -> bool:
+        return self.__stop
 
-        for index, a in enumerate(lista):
-            if a == '':
-                del lista[index]
-        try:
-            for x in lista:
-                dados = x.split(' ')
-                dados_1 = dados[1].replace(' ', '')
-                dados_2 = dados[3].replace(' ', '')
-                dados_2 = dados_2.lower()
-                sinais = f'{dados[0]}:00,{dados_1},{dados_2},{self.timeframe}'
-                with open(f'sinais corrigidos.txt', 'a') as file:
-                    file.write(f'{sinais}\n')
-        except:
-            pass
-        self.config()
+    @stop.setter
+    def stop(self, mode:bool):
+        self.__stop = mode
 
+    @property
+    def tend(self) -> bool:
+        return self.__tend
 
-    def connect(self):
-        self.API.connect()
+    @tend.setter
+    def tend(self, mode:bool) -> bool:
+        self.__tend = mode
 
-        if self.API.check_connect():
-            os.system('cls')
-            console.print(':heavy_check_mark: [bold green]Conectado com sucesso![/bold green]')
-            if os.path.exists('sinais corrigidos.txt'):
-                os.remove('sinais corrigidos.txt')
-                self.corrigir_sinais()
-            else:
-                self.corrigir_sinais()
-        else:
-            os.system('cls')
-            console.print('[red]Erro ao conectar, tente novamente[/]')
-            console.print('\n\nAperte [cyan]Enter[/] para tentar novamente')
-            input()
-            self.count += 1
-            self.__init__()
+    @property
+    def tendCandles(self) -> int:
+        return self.__tendCandles
+
+    @tendCandles.setter
+    def tendCandles(self, num:int) -> int:
+        self.__tendCandles = num
+
+    @property
+    def gale(self) -> int:
+        return self.__gale
+
+    @gale.setter
+    def gale(self, num:int) -> int:
+        self.__gale = num
+
+    @property
+    def bancaInicial(self) -> float:
+        return self.__bancaINC
+
+    @bancaInicial.setter
+    def bancaInicial(self, num:float) -> float:
+        self.__bancaINC = num
+
+    @property
+    def amount(self) -> float:
+        return self.__amount
+
+    @amount.setter
+    def amount(self, num:float) -> float:
+        self.__amount = num
+
+    @property
+    def stopWin(self) -> float:
+        return self.__StopWIN
+    
+    @stopWin.setter
+    def stopWin(self, num:float) -> float:
+        self.__StopWIN = num
+
+    @property
+    def stopLoss(self) -> float:
+        return self.__StopLOSS
+
+    @stopLoss.setter
+    def stopLoss(self, num:float) -> float:
+        self.__StopLOSS = num
 
 
     def config(self):
-        # Define o tipo de operação
-        console.print('\n[bold cyan]Tipo de operação[/bold cyan] ([bold green]REAL[/ bold green] OU [bold yellow]PRACTICE[/bold yellow]): ', style='italic', end = '')
-        self.modo = input()
-        self.modo = self.modo.upper()
-
-        # Muda qual banca o robo vai operar
-        self.API.change_balance(self.modo)
-        
-        # StopWin e StopLoss ativado ou desativado
-        console.print('\n[bold cyan]Operar com StopWIN e StopLOSS [/bold cyan][bold yellow](Y/N)[/bold yellow]? ', end = '')
-        self.stop = input()
-        self.stop = self.stop.upper()
-        
-        # Tendencia, sim ou nao
-        console.print('\n[bold cyan]Utilizar análise de tendência[/bold cyan] [bold yellow](Y/N)[/bold yellow][cyan]? ', end = '')
-        self.tend = input()
-        self.tend = self.tend.upper()
-        
-        # MartinGale
-        console.print('\n[bold cyan]Operar com 0, 1 ou 2 martingale(s)?[/bold cyan] [bold yellow](0/1/2)[/bold yellow][cyan]? [/]', end = '')
-        self.gale = int(input())
-
-        self.bancaINC = self.API.get_balance()
         self.amount = float(self.bancaINC) * 0.01
         self.amount = round(self.amount, 2)
         self.StopWIN = self.bancaINC + (self.bancaINC * 0.05)
@@ -96,29 +97,9 @@ class Robo:
         self.StopLOSS = self.bancaINC - (self.bancaINC * 0.035)
         self.StopLOSS = round(self.StopLOSS, 2)
 
-        time.sleep(0.1)
-        if self.modo == 'PRACTICE':
-            console.print(f'   :pushpin: [bold white]Modo escolhido:[/bold white] [bold yellow]{self.modo}[/bold yellow]')
-        elif self.modo == 'REAL':
-            console.print(f'   :pushpin: [bold white]Modo escolhido:[/bold white] [bold green]{self.modo}[/bold green]')
-        time.sleep(0.1)
-        console.print(f'   :pushpin: [bold white]Banca:[/bold white] [bold green]R$ {self.bancaINC}[/bold green]')
-        time.sleep(0.1)
-        console.print(f'   :pushpin: [bold white]Valor da entrada de [/bold white][bold yellow]1%[/bold yellow][bold white] da banca:[/bold white] [bold green]R$ {self.amount}[/bold green]')
-        time.sleep(0.1)
-        if self.stop == 'Y':
-            console.print(f'   :pushpin: [bold white]StopWIN de[/bold white] [bold green]5%[/bold green]: [bold cyan]{self.StopWIN}[/bold cyan]')
-            time.sleep(0.1)
-            console.print(f'   :pushpin: [bold white]StopLOSS de[/bold white] [bold red]3,5%[/bold red]: [bold cyan]{self.StopLOSS}[/bold cyan]')
-            time.sleep(0.1)
-        else:
-            pass
-        print('\n')
-        self.analise()
-
 
     def tendencia(self, par, timeframe):
-        velas = self.API.get_candles(par, (int(timeframe) * 60), 15,  time.time())
+        velas = self.API._candles(par, (int(timeframe) * 60), self.__tendCandles,  time.time())
         ultimo = round(velas[0]['close'], 5)
         primeiro = round(velas[-1]['close'], 5)
         diferenca = abs(round(((ultimo - primeiro) / primeiro) * 100, 5))
@@ -127,7 +108,7 @@ class Robo:
 
 
     def payout(self, par):
-        prc = self.API.get_all_profit()
+        prc = self.API._all_profit()
         return float(prc[par]['turbo'])
     
 
@@ -148,12 +129,12 @@ class Robo:
     def analise(self):
         while True:
             time.sleep(0.5)
-            if not self.Exit.is_set():
+            if not self.Exit.is_():
                 self.delay = 2
                 hora = datetime.now()
                 self.hora_c_delay = hora + timedelta(seconds=self.delay)
                 self.hora_c_delay = self.hora_c_delay.strftime("%H:%M:%S")
-                console.print(f"[{hora.strftime('%H:%M:%S')}] :: [bold white]Aguardando operação... - Banca: [/ bold white][bold green]R$ {self.API.get_balance()}[/ bold green]", end='\r')
+                console.print(f"[{hora.strftime('%H:%M:%S')}] :: [bold white]Aguardando operação... - Banca: [/ bold white][bold green]R$ {self.API._balance()}[/ bold green]", end='\r')
 
                 lista = self.carregar_sinais()
                 for sinal in lista:
@@ -168,7 +149,7 @@ class Robo:
                                 console.print(f'\n\n    :stop_sign: [bold white]ATIVO[/bold white] [bold yellow][{str(dados[1])}][/bold yellow] [bold red]CONTRA[/bold red] [bold white]A TENDÊNCIA![/bold white]\n')
 
                             elif tend_func == str(dados[2]):
-                                if self.Exit.is_set():
+                                if self.Exit.is_():
                                     print('\n\n')
                                     console.print('[cyan]Encerrando...[/]')
                                     sys.exit()
@@ -225,11 +206,11 @@ class Robo:
         try:
             if lucro > 0:
                 console.print(f'\n   :heavy_dollar_sign:[green]WIN[/] para [bold yellow][{par}][/ bold yellow] - Lucro de [bold cyan]R$[/]', round(lucro, 2), style = 'bold')
-                if self.stop == 'Y' and self.API.get_balance() >= self.StopWIN:
+                if self.stop == 'Y' and self.API._balance() >= self.StopWIN:
                     console.print('\n   :heavy_dollar_sign:[green]StopWIN Atingido[/], [cyan]volte amanhã...[/]', style = 'bold')
-                    self.Exit.set()
+                    self.Exit()
                 else:
-                    self.amount = float(self.API.get_balance()) * 0.01
+                    self.amount = float(self.API._balance()) * 0.01
                     self.amount = round(self.amount, 2)
             else:
                 console.print(f'\n   :x: [red]LOSS[/] para [bold yellow][{par}][/ bold yellow] - Perca de [bold cyan]R$[/]', round(lucro, 2), style = 'bold')
@@ -248,5 +229,3 @@ class Robo:
         except:
             console.print("\n[bold red]Erro ao adiquirir a Ordem![/]\n")
 
-
-Robo()
