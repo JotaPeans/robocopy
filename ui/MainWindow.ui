@@ -32,7 +32,7 @@
    <widget class="QPushButton" name="HomeButton">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>40</x>
       <y>10</y>
       <width>91</width>
       <height>31</height>
@@ -62,10 +62,10 @@
    <widget class="Line" name="line">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>40</x>
       <y>50</y>
-      <width>1181</width>
-      <height>16</height>
+      <width>621</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="orientation">
@@ -75,7 +75,7 @@
    <widget class="QPushButton" name="SettingsButton">
     <property name="geometry">
      <rect>
-      <x>110</x>
+      <x>140</x>
       <y>10</y>
       <width>91</width>
       <height>31</height>
@@ -115,7 +115,7 @@
      <string notr="true"/>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="seet">
      <widget class="QWidget" name="">
@@ -168,7 +168,8 @@
              </property>
              <property name="styleSheet">
               <string notr="true">border-radius: 5px;
-border:1px solid black;</string>
+border:1px solid black;
+padding-left: 5px;</string>
              </property>
              <property name="text">
               <string/>
@@ -218,7 +219,11 @@ border:1px solid black;</string>
              </property>
              <property name="styleSheet">
               <string notr="true">border-radius: 5px;
-border:1px solid black;</string>
+border:1px solid black;
+padding-left: 5px;</string>
+             </property>
+             <property name="text">
+              <string>0</string>
              </property>
              <property name="readOnly">
               <bool>true</bool>
@@ -265,7 +270,11 @@ border:1px solid black;</string>
              </property>
              <property name="styleSheet">
               <string notr="true">border-radius: 5px;
-border:1px solid black;</string>
+border:1px solid black;
+padding-left: 5px;</string>
+             </property>
+             <property name="text">
+              <string>0</string>
              </property>
              <property name="readOnly">
               <bool>true</bool>
@@ -329,7 +338,11 @@ border:1px solid black;</string>
              </property>
              <property name="styleSheet">
               <string notr="true">border-radius: 5px;
-border:1px solid black;</string>
+border:1px solid black;
+padding-left: 5px;</string>
+             </property>
+             <property name="text">
+              <string>100%</string>
              </property>
              <property name="readOnly">
               <bool>true</bool>
@@ -376,7 +389,11 @@ border:1px solid black;</string>
              </property>
              <property name="styleSheet">
               <string notr="true">border-radius: 5px;
-border:1px solid black;</string>
+border:1px solid black;
+padding-left: 5px;</string>
+             </property>
+             <property name="text">
+              <string>Em Andamento...</string>
              </property>
              <property name="readOnly">
               <bool>true</bool>
@@ -423,7 +440,8 @@ border:1px solid black;</string>
              </property>
              <property name="styleSheet">
               <string notr="true">border-radius: 5px;
-border:1px solid black;</string>
+border:1px solid black;
+padding-left: 5px;</string>
              </property>
              <property name="readOnly">
               <bool>true</bool>
@@ -879,7 +897,7 @@ QComboBox:down-arrow {
    <widget class="QLabel" name="currentWindow">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>560</x>
       <y>10</y>
       <width>101</width>
       <height>31</height>
@@ -897,6 +915,100 @@ QComboBox:down-arrow {
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="operationMode">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>10</y>
+      <width>100</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>100</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>100</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QComboBox {
+	border-radius: 10px;
+	border: 2px solid black;
+	padding-left: 5px;
+}
+
+QComboBox:drop-down {
+	border: None;
+}
+
+QComboBox:down-arrow {
+	image: url('icons/down-outline.svg');
+	height: 15px;
+	width: 15px;
+}</string>
+    </property>
+    <property name="editable">
+     <bool>false</bool>
+    </property>
+    <property name="currentText">
+     <string>Practice</string>
+    </property>
+    <property name="duplicatesEnabled">
+     <bool>false</bool>
+    </property>
+    <property name="frame">
+     <bool>true</bool>
+    </property>
+    <item>
+     <property name="text">
+      <string>Practice</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Real</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QPushButton" name="setBalance">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>10</y>
+      <width>31</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: None;
+background-color: rgba(255, 255, 255, 0);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>../icons/checkbox-outline.svg</normaloff>../icons/checkbox-outline.svg</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>30</width>
+      <height>30</height>
+     </size>
     </property>
    </widget>
   </widget>

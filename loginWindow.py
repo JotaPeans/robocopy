@@ -1,13 +1,13 @@
+from datetime import datetime
+from threading import Thread
 from time import sleep
 from PyQt6 import uic, QtWidgets
 from iqoptionapi.stable_api import IQ_Option
-from datetime import datetime, timedelta
-from rich.console import Console
 import sys
 import os
 from mainWindow import Ui_MainWindow
 
-console = Console()
+
 
 class LoginWindow:
     def __init__(self) -> None:
@@ -18,7 +18,6 @@ class LoginWindow:
             self.loginForm.rememberMe.click()
             file =  open('remember.txt', encoding='UTF-8')
             email = file.read()
-            print(email)
             self.loginForm.user.setText(email)
 
         self.loginForm.show()
@@ -86,7 +85,21 @@ class LoginWindow:
 
     def principalWindow(self):
         self.mainWindow = Ui_MainWindow()
+        self.mainWindow.mainForm.setBalance.clicked.connect(self.configs)
+        Thread(target=self.hours).start()
+        self.configs() # coloca os valores na tela!
 
+    def configs(self):
+        self.API.change_balance(self.mainWindow.mainForm.operationMode.currentText().upper())
+        self.banca = self.API.get_balance()
+
+        self.mainWindow.mainForm.saldoLine.setText(str(self.banca))
+
+    def hours(self):
+        while True:
+            hour = datetime.now().strftime('%H:%M:%S')
+            self.mainWindow.mainForm.horaLine.setText(hour)
+            sleep(1)
 
 login = QtWidgets.QApplication([])
 LoginWindow = LoginWindow()
