@@ -53,7 +53,7 @@
     </property>
     <property name="icon">
      <iconset>
-      <normaloff>../icons/home-outline.svg</normaloff>../icons/home-outline.svg</iconset>
+      <normaloff>../../robocopy/icons/home-outline.svg</normaloff>../../robocopy/icons/home-outline.svg</iconset>
     </property>
     <property name="autoRepeat">
      <bool>false</bool>
@@ -96,7 +96,7 @@
     </property>
     <property name="icon">
      <iconset>
-      <normaloff>../icons/settings-outline.svg</normaloff>../icons/settings-outline.svg</iconset>
+      <normaloff>../../robocopy/icons/settings-outline.svg</normaloff>../../robocopy/icons/settings-outline.svg</iconset>
     </property>
     <property name="autoRepeat">
      <bool>false</bool>
@@ -118,7 +118,7 @@
      <number>0</number>
     </property>
     <widget class="QWidget" name="seet">
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>30</x>
@@ -466,6 +466,15 @@ padding-left: 5px;</string>
       <property name="styleSheet">
        <string notr="true"/>
       </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
+      <property name="dragEnabled">
+       <bool>true</bool>
+      </property>
+      <property name="textElideMode">
+       <enum>Qt::ElideLeft</enum>
+      </property>
       <column>
        <property name="text">
         <string>Data</string>
@@ -528,10 +537,19 @@ padding-left: 5px;</string>
       </property>
       <property name="styleSheet">
        <string notr="true">border: 1px solid black;
-border-radius: 10px;</string>
+border-radius: 10px;
+padding: 8px;</string>
       </property>
       <property name="readOnly">
        <bool>true</bool>
+      </property>
+      <property name="html">
+       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </widget>
@@ -540,7 +558,7 @@ border-radius: 10px;</string>
       <property name="geometry">
        <rect>
         <x>50</x>
-        <y>23</y>
+        <y>83</y>
         <width>111</width>
         <height>31</height>
        </rect>
@@ -561,7 +579,7 @@ border-radius: 10px;</string>
       <property name="geometry">
        <rect>
         <x>480</x>
-        <y>120</y>
+        <y>180</y>
         <width>101</width>
         <height>22</height>
        </rect>
@@ -571,7 +589,7 @@ border-radius: 10px;</string>
       <property name="geometry">
        <rect>
         <x>370</x>
-        <y>80</y>
+        <y>140</y>
         <width>71</width>
         <height>20</height>
        </rect>
@@ -587,7 +605,7 @@ border-radius: 10px;</string>
       <property name="geometry">
        <rect>
         <x>480</x>
-        <y>80</y>
+        <y>140</y>
         <width>100</width>
         <height>21</height>
        </rect>
@@ -641,12 +659,17 @@ QComboBox:down-arrow {
         <string>Porcentagem</string>
        </property>
       </item>
+      <item>
+       <property name="text">
+        <string>Não Usar</string>
+       </property>
+      </item>
      </widget>
      <widget class="QLabel" name="label_11">
       <property name="geometry">
        <rect>
         <x>370</x>
-        <y>120</y>
+        <y>180</y>
         <width>71</width>
         <height>20</height>
        </rect>
@@ -662,7 +685,7 @@ QComboBox:down-arrow {
       <property name="geometry">
        <rect>
         <x>370</x>
-        <y>160</y>
+        <y>220</y>
         <width>71</width>
         <height>20</height>
        </rect>
@@ -678,7 +701,7 @@ QComboBox:down-arrow {
       <property name="geometry">
        <rect>
         <x>480</x>
-        <y>160</y>
+        <y>220</y>
         <width>101</width>
         <height>22</height>
        </rect>
@@ -688,7 +711,7 @@ QComboBox:down-arrow {
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>40</y>
+        <y>100</y>
         <width>601</width>
         <height>181</height>
        </rect>
@@ -701,7 +724,7 @@ QComboBox:down-arrow {
       <property name="geometry">
        <rect>
         <x>90</x>
-        <y>80</y>
+        <y>140</y>
         <width>91</width>
         <height>20</height>
        </rect>
@@ -717,7 +740,7 @@ QComboBox:down-arrow {
       <property name="geometry">
        <rect>
         <x>200</x>
-        <y>80</y>
+        <y>140</y>
         <width>100</width>
         <height>21</height>
        </rect>
@@ -776,7 +799,7 @@ QComboBox:down-arrow {
       <property name="geometry">
        <rect>
         <x>200</x>
-        <y>120</y>
+        <y>180</y>
         <width>101</width>
         <height>22</height>
        </rect>
@@ -786,7 +809,7 @@ QComboBox:down-arrow {
       <property name="geometry">
        <rect>
         <x>90</x>
-        <y>120</y>
+        <y>180</y>
         <width>91</width>
         <height>20</height>
        </rect>
@@ -802,7 +825,7 @@ QComboBox:down-arrow {
       <property name="geometry">
        <rect>
         <x>90</x>
-        <y>160</y>
+        <y>220</y>
         <width>71</width>
         <height>20</height>
        </rect>
@@ -818,7 +841,7 @@ QComboBox:down-arrow {
       <property name="geometry">
        <rect>
         <x>200</x>
-        <y>160</y>
+        <y>220</y>
         <width>100</width>
         <height>21</height>
        </rect>
@@ -878,6 +901,215 @@ QComboBox:down-arrow {
        </property>
       </item>
      </widget>
+     <widget class="QLabel" name="label_17">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>303</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Tendência</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_18">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>420</y>
+        <width>121</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border: None;</string>
+      </property>
+      <property name="text">
+       <string>Quantidade de velas:</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="tendenciaCheckBox">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>370</y>
+        <width>76</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Tendência</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="QntdVelasSpinBox">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>420</y>
+        <width>42</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QWidget" name="widget_2" native="true">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>320</y>
+        <width>291</width>
+        <height>181</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border: 1px solid black;</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="operationMode">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>20</y>
+        <width>100</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>100</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QComboBox {
+	border-radius: 10px;
+	border: 2px solid black;
+	padding-left: 5px;
+}
+
+QComboBox:drop-down {
+	border: None;
+}
+
+QComboBox:down-arrow {
+	image: url('icons/down-outline.svg');
+	height: 15px;
+	width: 15px;
+}</string>
+      </property>
+      <property name="editable">
+       <bool>false</bool>
+      </property>
+      <property name="currentText">
+       <string>Practice</string>
+      </property>
+      <property name="duplicatesEnabled">
+       <bool>false</bool>
+      </property>
+      <property name="frame">
+       <bool>true</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string>Practice</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Real</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>-1</x>
+        <y>640</y>
+        <width>681</width>
+        <height>80</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QLabel" name="saveLabel">
+         <property name="font">
+          <font>
+           <family>Century Gothic</family>
+           <pointsize>12</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: rgb(0, 170, 91);</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QPushButton" name="saveSettings">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+	border-radius: 10px;
+	border: 2px solid black;
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Salvar</string>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>30</width>
+             <height>20</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <zorder>widget_2</zorder>
      <zorder>widget</zorder>
      <zorder>label_9</zorder>
      <zorder>stopWinValue</zorder>
@@ -892,6 +1124,12 @@ QComboBox:down-arrow {
      <zorder>label_14</zorder>
      <zorder>label_15</zorder>
      <zorder>galeValue</zorder>
+     <zorder>label_17</zorder>
+     <zorder>label_18</zorder>
+     <zorder>tendenciaCheckBox</zorder>
+     <zorder>QntdVelasSpinBox</zorder>
+     <zorder>operationMode</zorder>
+     <zorder>verticalLayoutWidget</zorder>
     </widget>
    </widget>
    <widget class="QLabel" name="currentWindow">
@@ -915,100 +1153,6 @@ QComboBox:down-arrow {
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="operationMode">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>10</y>
-      <width>100</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="minimumSize">
-     <size>
-      <width>100</width>
-      <height>0</height>
-     </size>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>100</width>
-      <height>16777215</height>
-     </size>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QComboBox {
-	border-radius: 10px;
-	border: 2px solid black;
-	padding-left: 5px;
-}
-
-QComboBox:drop-down {
-	border: None;
-}
-
-QComboBox:down-arrow {
-	image: url('icons/down-outline.svg');
-	height: 15px;
-	width: 15px;
-}</string>
-    </property>
-    <property name="editable">
-     <bool>false</bool>
-    </property>
-    <property name="currentText">
-     <string>Practice</string>
-    </property>
-    <property name="duplicatesEnabled">
-     <bool>false</bool>
-    </property>
-    <property name="frame">
-     <bool>true</bool>
-    </property>
-    <item>
-     <property name="text">
-      <string>Practice</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Real</string>
-     </property>
-    </item>
-   </widget>
-   <widget class="QPushButton" name="setBalance">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>10</y>
-      <width>31</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">border: None;
-background-color: rgba(255, 255, 255, 0);</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset>
-      <normaloff>../icons/checkbox-outline.svg</normaloff>../icons/checkbox-outline.svg</iconset>
-    </property>
-    <property name="iconSize">
-     <size>
-      <width>30</width>
-      <height>30</height>
-     </size>
     </property>
    </widget>
   </widget>
