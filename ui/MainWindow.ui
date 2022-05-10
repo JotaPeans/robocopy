@@ -115,7 +115,7 @@
      <string notr="true"/>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="seet">
      <widget class="QWidget" name="layoutWidget">
@@ -393,7 +393,7 @@ border:1px solid black;
 padding-left: 5px;</string>
              </property>
              <property name="text">
-              <string>Em Andamento...</string>
+              <string/>
              </property>
              <property name="readOnly">
               <bool>true</bool>
@@ -1096,6 +1096,41 @@ QComboBox:down-arrow {
            </property>
            <property name="text">
             <string>Salvar</string>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>30</width>
+             <height>20</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="finalizar">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>120</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+	border-radius: 10px;
+	border: 2px solid black;
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Finalizar Operações</string>
            </property>
            <property name="iconSize">
             <size>
