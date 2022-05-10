@@ -86,7 +86,7 @@ class LoginWindow:
     def principalWindow(self):
         self.mainWindow = Ui_MainWindow()
         self.mainWindow.mainForm.setBalance.clicked.connect(self.configs)
-        Thread(target=self.hours).start()
+        Thread(target=self.hours, daemon=True).start()
         self.configs() # coloca os valores na tela!
 
     def configs(self):
