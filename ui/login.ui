@@ -142,6 +142,19 @@ QPushButton:hover {
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="rememberMe">
+       <property name="styleSheet">
+        <string notr="true">margin-left: 30px;</string>
+       </property>
+       <property name="text">
+        <string>Lembrar do email</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="warning">
        <property name="maximumSize">
         <size>
