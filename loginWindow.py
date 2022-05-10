@@ -13,6 +13,14 @@ class LoginWindow:
     def __init__(self) -> None:
         self.loginForm = uic.loadUi('ui/login.ui')
         self.loginForm.Login.clicked.connect(self.getLoginValues)
+
+        if os.path.exists('remember.txt'):
+            self.loginForm.rememberMe.click()
+            file =  open('remember.txt', encoding='UTF-8')
+            email = file.read()
+            print(email)
+            self.loginForm.user.setText(email)
+
         self.loginForm.show()
 
     def getLoginValues(self):
@@ -29,6 +37,15 @@ class LoginWindow:
         
         if self.user and self.password != '':
             self.API = IQ_Option(self.user, self.password)
+
+            if self.loginForm.rememberMe.isChecked():
+                with open('remember.txt', 'w') as file:
+                    file.write(self.user)
+            
+            else:
+                if os.path.exists('remember.txt'):
+                    os.remove('remember.txt')
+
             self.connect()
 
     def changeUserStyleSheet(self):
