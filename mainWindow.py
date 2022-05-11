@@ -1,3 +1,4 @@
+from csv import excel
 from datetime import datetime, timedelta
 from threading import Thread, Event
 from time import sleep, time
@@ -289,8 +290,8 @@ class LoginWindow:
         self.mainWindow.corrigirSinais(caminho=self.arquivo)
         self.main.FileWay.setText(self.arquivo)
 
-    def tendencia(self, par, timeframe):
-        velas = self.API._candles(par, (int(timeframe) * 60), self.__tendCandles,  time.time())
+    def tendencia(self, par:str, timeframe:int):
+        velas = self.API.get_candles(par, (int(timeframe) * 60), self.tendCandles, time())
         ultimo = round(velas[0]['close'], 5)
         primeiro = round(velas[-1]['close'], 5)
         diferenca = abs(round(((ultimo - primeiro) / primeiro) * 100, 5))
@@ -305,12 +306,45 @@ class LoginWindow:
         prc = self.API.get_all_profit()
         return float(prc[par]['binary'])
 
+    def operationLabel(self):
+        while not self.Exit.is_set():
+            self.main.statusLine.setText('Em Operação')
+            sleep(1)
+            self.main.statusLine.setText('Em Operação.')
+            sleep(1)
+            self.main.statusLine.setText('Em Operação. .')
+            sleep(1)
+            self.main.statusLine.setText('Em Operação. . .')
+            sleep(1)
+
+    def getSleepTime(Self, horaSinal:str):
+        sinal = horaSinal
+
+        date_now = datetime.now()
+        date_now = date_now.strftime("%d/%m/%Y")
+
+        string_date = f'{date_now} - {sinal}'
+        formater = "%d/%m/%Y - %H:%M:%S"
+        sinal_date = datetime.strptime(string_date, formater)
+
+        tempo_restante = str(sinal_date - datetime.now())
+        tempo_restante = tempo_restante[:7]
+        tempo_restante = tempo_restante.split(':')
+
+        hora = int(tempo_restante[0])
+        mins = int(tempo_restante[1])
+        secs = int(tempo_restante[2])
+
+        tempoRestanteSeconds = (hora * 3600) + (mins * 60) + secs
+
+        return tempoRestanteSeconds
+
     def operation(self):
         self.main.saveLabel.setText('Operações iniciadas!')
         sleep(2)
         self.main.saveLabel.setText('')
         
-        self.main.statusLine.setText('Em Operação!')
+        Thread(target=self.operationLabel, daemon=True).start()
         file = open('sinais corrigidos.txt', encoding='UTF-8')
         lista = file.read()
         file.close
@@ -321,9 +355,15 @@ class LoginWindow:
             if a == '':
                 del lista[index]
 
-        while not self.Exit.is_set():
-            sleep(1)
-            self.analise(lista=lista)
+        for sinal in lista:
+            dados = sinal.split(',')
+            try:  #se tiver um sinal na lista que ja passou da hora atual, retornara um erro. Se isso acontecer, o continue no except serve para pular para o proximo sinal.
+                sleep(self.getSleepTime(dados[0]) - 10)
+            except:
+                continue
+            while not self.Exit.is_set():
+                sleep(1)
+                self.analise(lista=lista)
 
     def analise(self, lista):
         self.delay = 2
@@ -340,12 +380,13 @@ class LoginWindow:
 
                     if sinalTendencia != str(dados[2]):
                         outputString = f'Ativo [{str(dados[1])}] contra a tendência!'
+                        self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('Contra Tendência!'))
                         self.outputs(outputString)
 
                     elif sinalTendencia == str(dados[2]):
                         outputString = f'Abrindo operação - [{str(dados[1])}] -> {str(dados[2]).upper()}'
                         self.outputs(outputString)
-                        Thread(target=self.buy, args=(str(dados[1]), str(dados[2]), int(dados[3]), self.amount), daemon=True).start()
+                        Thread(target=self.buy, args=(str(dados[1]), str(dados[2]), int(dados[3]), self.amount, index), daemon=True).start()
                         self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('Operação aberta'))
                 else:
                     outputString = f'Abrindo operação - [{str(dados[1])}] -> {str(dados[2]).upper()}'
@@ -363,7 +404,7 @@ class LoginWindow:
         if method == "digital":
             status, id = self.API.buy_digital_spot(par, amount, dir, timeframe)
             if status == False:
-                self.buy(par, dir, timeframe, amount, method = "binary")
+                self.buy(par, dir, timeframe, amount, method = "binary", index=index)
             else:
                 status = False
                 sleep((timeframe * 60) - 10)
