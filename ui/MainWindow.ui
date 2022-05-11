@@ -23,7 +23,11 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Copy Trade V1.0</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../icons/4712139.png</normaloff>../icons/4712139.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(255, 255, 255);</string>
@@ -115,7 +119,7 @@
      <string notr="true"/>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="seet">
      <widget class="QWidget" name="layoutWidget">

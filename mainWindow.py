@@ -194,7 +194,6 @@ class LoginWindow:
             hour = datetime.now().strftime('%H:%M:%S')
             self.main.horaLine.setText(hour)
             self.main.saldoLine.setText(str(self.API.get_balance()))
-
             if self.wins != 0:
                 prct = (self.wins / (self.hits + self.wins)) * 100
                 prct = round(prct, 2)
@@ -202,7 +201,8 @@ class LoginWindow:
                     self.main.prctLine.setText(f'{prct} %')
                 else:
                     self.main.prctLine.setText('0.0 %')
-                sleep(1)
+
+            sleep(1)
 
     def initConfigs(self):
         entryHour = datetime.now().strftime('%H:%M:%S')
@@ -277,13 +277,13 @@ class LoginWindow:
         tendencia = "call" if ultimo < primeiro and diferenca > 0.01 else "put" if ultimo > primeiro and diferenca > 0.01 else False
         return tendencia
 
-    def outputs(self):
+    def outputs(self, outputstring:str):
         hour = datetime.now().strftime('%H:%M:%S')
-        self.main.output.append(f'[{hour}] - {self.outputString}')
+        self.main.output.append(f'[{hour}] - {outputstring}')
 
     def payout(self, par):
         prc = self.API.get_all_profit()
-        return float(prc[par]['turbo'])
+        return float(prc[par]['binary'])
 
     def operation(self):
         file = open('sinais corrigidos.txt', encoding='UTF-8')
@@ -309,21 +309,21 @@ class LoginWindow:
         for sinal in lista:
             dados = sinal.split(',')
             if self.hora_c_delay == dados[0]:
-                if self.__tend:
+                if self.tend:
                     sinalTendencia = self.tendencia(str(dados[1]), int(dados[3]))
 
                     if sinalTendencia != str(dados[2]):
-                        self.outputString = f'Ativo [{str(dados[1])}] contra a tendência!'
-                        self.outputs()
+                        outputString = f'Ativo [{str(dados[1])}] contra a tendência!'
+                        self.outputs(outputString)
 
                     elif sinalTendencia == str(dados[2]):
-                        self.outputString = f'Abrindo operação - [{str(dados[1])}] -> {str(dados[2]).upper()}'
-                        self.outputs()
-                        Thread(target=self.buy(str(dados[1]), str(dados[2]), int(dados[3]), amount=self.amount), daemon=True)
+                        outputString = f'Abrindo operação - [{str(dados[1])}] -> {str(dados[2]).upper()}'
+                        self.outputs(outputString)
+                        Thread(target=self.buy, args=(str(dados[1]), str(dados[2]), int(dados[3]), self.amount), daemon=True).start()
                 else:
-                    self.outputString = f'Abrindo operação - [{str(dados[1])}] -> {str(dados[2]).upper()}'
-                    self.outputs()
-                    Thread(target=self.buy(str(dados[1]), str(dados[2]), int(dados[3]), amount=self.amount), daemon=True)
+                    outputString = f'Abrindo operação - [{str(dados[1])}] -> {str(dados[2]).upper()}'
+                    self.outputs(outputString)
+                    Thread(target=self.buy, args=(str(dados[1]), str(dados[2]), int(dados[3]), self.amount), daemon=True).start()
 
     def buy(self, par, dir, timeframe, amount, method="digital", gale=1):
         par = str(par)
@@ -343,8 +343,8 @@ class LoginWindow:
                     sleep(0.5)
                     i += 0.5
                     if i == 20:
-                        self.outputString = f'Time out, ordem [{par}] nao adquirida'
-                        self.outputs()
+                        outputString = f'Time out, ordem [{par}] nao adquirida'
+                        self.outputs(outputString)
 
         elif method == "binary":
             status, id = self.API.buy(amount, par, dir, timeframe)
@@ -357,55 +357,56 @@ class LoginWindow:
                     sleep(0.5)
                     i += 0.5
                     if i == 20:
-                        self.outputString = f'Time out, ordem [{par}] nao adquirida'
-                        self.outputs()
+                        outputString = f'Time out, ordem [{par}] nao adquirida'
+                        self.outputs(outputString)
                         break
                     elif lucro != None :
                         break
             
-        # try:
-        diferenca = self.API.get_balance() - self.__bancaINC
+        try:
+            diferenca = self.API.get_balance() - self.__bancaINC
 
-        if lucro > 0:
-            self.outputString = f'WIN - [{par}] - Lucro de R$ {round(lucro, 2)}'
-            self.outputs()
-            self.wins += 1
-            self.refreshWins_Hits()
+            if lucro > 0:
+                outputString = f'WIN - [{par}] - Lucro de R$ {round(lucro, 2)}'
+                self.outputs(outputString)
+                self.wins += 1
+                self.refreshWins_Hits()
 
-            if self.stop == True and diferenca >= self.stopWin:
-                self.outputString = 'StopWIN Atingido, volte amanhã...'
-                self.outputs()
-                self.Exit.set()
+                if self.stop == True and diferenca >= self.stopWin:
+                    outputString = 'StopWIN Atingido, volte amanhã...'
+                    self.outputs(outputString)
+                    self.Exit.set()
 
-            else:
-                self.amount = float(self.API.get_balance()) * 0.01
-                self.amount = round(self.amount, 2)
-                
-        else:
-            self.outputString = f'LOSS - [{par}] - LPerca de R$ {round(lucro, 2)}'
-            self.outputs()
-            self.hits += 1
-            self.refreshWins_Hits()
-
-            if self.gale == 1:
-                self.buy(par, dir, timeframe)
-                
-            elif self.gale == 2:
-                if gale == 1:
-                    self.outputString = f'Executando Martingale - ordem 1 - [{par}] -> {dir.upper()}'
-                    self.outputs()
-                    self.buy(par, dir, timeframe, gale = 2, amount = ((self.amount / self.payout(par)) + self.amount))
-                
-                elif gale == 2:
-                    self.outputString = f'Executando Martingale - ordem 2 - [{par}] -> {dir.upper()}'
-                    self.buy(par, dir, timeframe, gale = None, amount = (((((self.amount / self.payout(par)) + self.amount) + self.amount) / self.payout(par)) + self.amount))
-                
                 else:
-                    self.amount = self.amount + ((((self.amount / self.payout(par)) + self.amount) + (((((self.amount / self.payout(par)) + self.amount) + self.amount) / self.payout(par)) + self.amount)) + self.amount) / self.payout(par)
+                    self.amount = float(self.API.get_balance()) * 0.01
                     self.amount = round(self.amount, 2)
-        # except:
-        #     self.outputString = 'Erro ao adiquirir a Ordem!'
-        #     self.outputs()
+                    
+            else:
+                outputString = f'LOSS - [{par}] - Perca de R$ {round(lucro, 2)}'
+                self.outputs(outputString)
+                self.hits += 1
+                self.refreshWins_Hits()
+
+                if self.gale == 1:
+                    self.buy(par, dir, timeframe)
+                    
+                elif self.gale == 2:
+                    if gale == 1:
+                        outputString = f'Executando Martingale - ordem 1 - [{par}] -> {dir.upper()}'
+                        self.outputs(outputString)
+                        self.buy(par, dir, timeframe, gale = 2, amount = ((self.amount / self.payout(par)) + self.amount))
+                    
+                    elif gale == 2:
+                        outputString = f'Executando Martingale - ordem 2 - [{par}] -> {dir.upper()}'
+                        self.outputs(outputString)
+                        self.buy(par, dir, timeframe, gale = None, amount = (((((self.amount / self.payout(par)) + self.amount) + self.amount) / self.payout(par)) + self.amount))
+                    
+                    else:
+                        self.amount = self.amount + ((((self.amount / self.payout(par)) + self.amount) + (((((self.amount / self.payout(par)) + self.amount) + self.amount) / self.payout(par)) + self.amount)) + self.amount) / self.payout(par)
+                        self.amount = round(self.amount, 2)
+        except:
+            outputString = 'Erro ao adiquirir a Ordem!'
+            self.outputs(outputString)
 
 if __name__ == '__main__':
     login = QtWidgets.QApplication([])

@@ -25,6 +25,10 @@
   <property name="windowTitle">
    <string>Sign in</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../icons/4712139.png</normaloff>../icons/4712139.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
