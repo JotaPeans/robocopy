@@ -307,15 +307,26 @@ class LoginWindow:
         return float(prc[par]['binary'])
 
     def operationLabel(self):
+        #while not self.Exit.is_set():
+        #   self.main.statusLine.setText('Em Operação')
+        #   sleep(0.5)
+        #   self.main.statusLine.setText('Em Operação.')
+        #   sleep(0.5)
+        #   self.main.statusLine.setText('Em Operação. .')
+        #   sleep(0.5)
+        #   self.main.statusLine.setText('Em Operação. . .')
+        #   sleep(0.5)
+
+        v = 0.25
         while not self.Exit.is_set():
-            self.main.statusLine.setText('Em Operação')
-            sleep(1)
-            self.main.statusLine.setText('Em Operação.')
-            sleep(1)
-            self.main.statusLine.setText('Em Operação. .')
-            sleep(1)
-            self.main.statusLine.setText('Em Operação. . .')
-            sleep(1)
+            self.main.statusLine.setText('Em Operação ◜')
+            sleep(v)
+            self.main.statusLine.setText('Em Operação ◝')
+            sleep(v)
+            self.main.statusLine.setText('Em Operação ◞')
+            sleep(v)
+            self.main.statusLine.setText('Em Operação ◟')
+            sleep(v)
 
     def getSleepTime(Self, horaSinal:str):
         sinal = horaSinal
@@ -343,6 +354,7 @@ class LoginWindow:
         self.main.saveLabel.setText('Operações iniciadas!')
         sleep(2)
         self.main.saveLabel.setText('')
+        os.system('cls')
         
         Thread(target=self.operationLabel, daemon=True).start()
         file = open('sinais corrigidos.txt', encoding='UTF-8')
@@ -454,7 +466,7 @@ class LoginWindow:
                     self.amount = float(self.API.get_balance()) * 0.01
                     self.amount = round(self.amount, 2)
                     
-            else:
+            elif lucro <= 0:
                 outputString = f'LOSS - [{par}] - Perca de R$ {round(lucro, 2)}'
                 self.outputs(outputString)
                 self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('LOSS'))
@@ -488,7 +500,10 @@ class LoginWindow:
                     self.Exit.set()
         except:
             outputString = 'Erro ao adiquirir a Ordem!'
+            self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('Operação Fechada!'))
             self.outputs(outputString)
+
+
 
 if __name__ == '__main__':
     login = QtWidgets.QApplication([])

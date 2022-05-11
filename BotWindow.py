@@ -14,7 +14,8 @@ class Ui_MainWindow:
         self.dateToday = datetime.now().strftime('%d-%m-%Y')
         self.timeframe = 5
         self.mainForm = uic.loadUi('ui/MainWindow.ui')
-        self.mainForm.tableWidget.setColumnWidth(5, 104)
+        self.mainForm.tableWidget.setColumnWidth(4, 70)
+        self.mainForm.tableWidget.setColumnWidth(5, 132)
         self.mainForm.tableWidget.setColumnWidth(1, 76)
         #self.corrigirSinais()
 
