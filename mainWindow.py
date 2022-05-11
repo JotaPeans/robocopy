@@ -1,11 +1,14 @@
 from datetime import datetime, timedelta
 from threading import Thread, Event
 from time import sleep, time
-from PyQt6 import uic, QtWidgets
+
+from PyQt6 import uic, QtWidgets, QtCore
+from PyQt6.QtCore import QPropertyAnimation, QRect
+
 from iqoptionapi.stable_api import IQ_Option
+from BotWindow import Ui_MainWindow
 import sys
 import os
-from BotWindow import Ui_MainWindow
 
 
 class LoginWindow:
@@ -182,12 +185,28 @@ class LoginWindow:
         self.mainWindow = Ui_MainWindow()
         self.main = self.mainWindow.mainForm
         self.main.saveSettings.clicked.connect(lambda: Thread(target=self.configs, daemon=True).start())
+        self.main.iniciar.clicked.connect(lambda: Thread(target=self.operation, daemon=True).start())
         self.main.finalizar.clicked.connect(lambda: self.Exit.set())
+        self.main.inserirFile.clicked.connect(self.chooseFile)
 
         # daemon -> diz que se a thread principal terminar, ele termina tb
         Thread(target=self.hours, daemon=True).start()
 
         self.initConfigs()
+
+    def pushStopWin(self):
+        self.anim = QPropertyAnimation(self.main.stopWin, b"geometry")
+        self.anim.setDuration(200)
+        self.anim.setStartValue(QRect(190,-65, 321,61))
+        self.anim.setEndValue(QRect(190,30, 321,61))
+        self.anim.start()
+
+    def pushStopLoss(self):
+        self.anim = QPropertyAnimation(self.main.stopLoss, b"geometry")
+        self.anim.setDuration(200)
+        self.anim.setStartValue(QRect(190,-65, 321,61))
+        self.anim.setEndValue(QRect(190,30, 321,61))
+        self.anim.start()
 
     def hours(self):
         while True:
@@ -265,9 +284,10 @@ class LoginWindow:
         sleep(2)
         self.main.saveLabel.setText('')
 
-        self.main.statusLine.setText('Em Operação!')
-
-        Thread(target=self.operation, daemon=True).start()
+    def chooseFile(self):
+        self.arquivo = QtWidgets.QFileDialog.getOpenFileName()[0]
+        self.mainWindow.corrigirSinais(caminho=self.arquivo)
+        self.main.FileWay.setText(self.arquivo)
 
     def tendencia(self, par, timeframe):
         velas = self.API._candles(par, (int(timeframe) * 60), self.__tendCandles,  time.time())
@@ -286,6 +306,11 @@ class LoginWindow:
         return float(prc[par]['binary'])
 
     def operation(self):
+        self.main.saveLabel.setText('Operações iniciadas!')
+        sleep(2)
+        self.main.saveLabel.setText('')
+        
+        self.main.statusLine.setText('Em Operação!')
         file = open('sinais corrigidos.txt', encoding='UTF-8')
         lista = file.read()
         file.close
@@ -306,6 +331,7 @@ class LoginWindow:
         self.hora_c_delay = hora + timedelta(seconds=self.delay)
         self.hora_c_delay = self.hora_c_delay.strftime("%H:%M:%S")
 
+        index = 0
         for sinal in lista:
             dados = sinal.split(',')
             if self.hora_c_delay == dados[0]:
@@ -320,12 +346,16 @@ class LoginWindow:
                         outputString = f'Abrindo operação - [{str(dados[1])}] -> {str(dados[2]).upper()}'
                         self.outputs(outputString)
                         Thread(target=self.buy, args=(str(dados[1]), str(dados[2]), int(dados[3]), self.amount), daemon=True).start()
+                        self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('Operação aberta'))
                 else:
                     outputString = f'Abrindo operação - [{str(dados[1])}] -> {str(dados[2]).upper()}'
                     self.outputs(outputString)
-                    Thread(target=self.buy, args=(str(dados[1]), str(dados[2]), int(dados[3]), self.amount), daemon=True).start()
+                    Thread(target=self.buy, args=(str(dados[1]), str(dados[2]), int(dados[3]), self.amount, index), daemon=True).start()
+                    self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('Operação aberta'))
 
-    def buy(self, par, dir, timeframe, amount, method="digital", gale=1):
+            index += 1
+
+    def buy(self, par:str, dir:str, timeframe:int, amount:float, index:int, method="digital", gale=1):
         par = str(par)
         dir = str(dir)
         timeframe = int(timeframe)
@@ -369,12 +399,14 @@ class LoginWindow:
             if lucro > 0:
                 outputString = f'WIN - [{par}] - Lucro de R$ {round(lucro, 2)}'
                 self.outputs(outputString)
+                self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('WIN'))
                 self.wins += 1
                 self.refreshWins_Hits()
 
                 if self.stop == True and diferenca >= self.stopWin:
                     outputString = 'StopWIN Atingido, volte amanhã...'
                     self.outputs(outputString)
+                    self.pushStopWin()
                     self.Exit.set()
 
                 else:
@@ -384,26 +416,35 @@ class LoginWindow:
             else:
                 outputString = f'LOSS - [{par}] - Perca de R$ {round(lucro, 2)}'
                 self.outputs(outputString)
+                self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('LOSS'))
                 self.hits += 1
                 self.refreshWins_Hits()
 
                 if self.gale == 1:
-                    self.buy(par, dir, timeframe)
+                    self.buy(par, dir, timeframe, amount = ((self.amount / self.payout(par)) + self.amount), index=index)
                     
                 elif self.gale == 2:
                     if gale == 1:
                         outputString = f'Executando Martingale - ordem 1 - [{par}] -> {dir.upper()}'
                         self.outputs(outputString)
-                        self.buy(par, dir, timeframe, gale = 2, amount = ((self.amount / self.payout(par)) + self.amount))
+                        self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('MARTINGALE 1'))
+                        self.buy(par, dir, timeframe, gale = 2, amount = ((self.amount / self.payout(par)) + self.amount), index=index)
                     
                     elif gale == 2:
                         outputString = f'Executando Martingale - ordem 2 - [{par}] -> {dir.upper()}'
                         self.outputs(outputString)
-                        self.buy(par, dir, timeframe, gale = None, amount = (((((self.amount / self.payout(par)) + self.amount) + self.amount) / self.payout(par)) + self.amount))
+                        self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('MARTINGALE 2'))
+                        self.buy(par, dir, timeframe, gale = None, amount = (((((self.amount / self.payout(par)) + self.amount) + self.amount) / self.payout(par)) + self.amount), index=index)
                     
                     else:
                         self.amount = self.amount + ((((self.amount / self.payout(par)) + self.amount) + (((((self.amount / self.payout(par)) + self.amount) + self.amount) / self.payout(par)) + self.amount)) + self.amount) / self.payout(par)
                         self.amount = round(self.amount, 2)
+
+                if self.stop == True and diferenca >= self.stopLoss:
+                    outputString = 'StopLoss Atingido, volte amanhã...'
+                    self.outputs(outputString)
+                    self.pushStopLoss()
+                    self.Exit.set()
         except:
             outputString = 'Erro ao adiquirir a Ordem!'
             self.outputs(outputString)

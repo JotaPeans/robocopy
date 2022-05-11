@@ -12,7 +12,7 @@ class Ui_MainWindow:
         self.timeframe = 5
         self.mainForm = uic.loadUi('ui/MainWindow.ui')
         self.mainForm.tableWidget.setColumnWidth(5, 104)
-        self.corrigirSinais()
+        #self.corrigirSinais()
 
         # Set Home Page
         self.mainForm.stackedWidget.setCurrentIndex(0)
@@ -23,9 +23,9 @@ class Ui_MainWindow:
 
         self.mainForm.show()
 
-    def corrigirSinais(self):
+    def corrigirSinais(self, caminho:str):
 
-        file = open('sinais.txt', encoding='UTF-8')
+        file = open(caminho, encoding='UTF-8')
         lista = file.read()
         file.close
 
