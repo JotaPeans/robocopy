@@ -1,4 +1,3 @@
-from csv import excel
 from datetime import datetime, timedelta
 from threading import Thread, Event
 from time import sleep, time
@@ -231,6 +230,7 @@ class LoginWindow:
         self.main.hitsLine.setText(str(self.hits))
         self.main.prctLine.setText('0.0 %')
         self.main.output.append(f'[{entryHour}] - Conectado com Sucesso!')
+        self.main.output.append(f'[{entryHour}] - Banca inicial - R${self.API.get_balance()}')
 
     def refreshWins_Hits(self):
         self.main.winsLine.setText(str(self.wins))

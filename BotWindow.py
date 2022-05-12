@@ -1,10 +1,6 @@
-from time import time
 from PyQt6 import uic, QtWidgets
-import sys
 import os
-from datetime import datetime, timedelta
-
-from cv2 import exp
+from datetime import datetime
 
 mainWindow = QtWidgets.QApplication([])
 
