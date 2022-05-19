@@ -5,7 +5,7 @@ from datetime import datetime
 mainWindow = QtWidgets.QApplication([])
 
 
-class Ui_MainWindow:
+class Ui_BotWindow:
     def __init__(self) -> None:
         self.dateToday = datetime.now().strftime('%d-%m-%Y')
         self.timeframe = 5

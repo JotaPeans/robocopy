@@ -6,7 +6,7 @@ from PyQt6 import uic, QtWidgets, QtCore
 from PyQt6.QtCore import QPropertyAnimation, QRect
 
 from iqoptionapi.stable_api import IQ_Option
-from BotWindow import Ui_MainWindow
+from BotWindow import Ui_BotWindow
 import sys
 import os
 
@@ -182,12 +182,12 @@ class LoginWindow:
 
     def principalWindow(self):
         self.loginForm.hide() #fecha a tela de login!
-        self.mainWindow = Ui_MainWindow()
-        self.main = self.mainWindow.mainForm
-        self.main.saveSettings.clicked.connect(lambda: Thread(target=self.configs, daemon=True).start())
-        self.main.iniciar.clicked.connect(lambda: Thread(target=self.operation, daemon=True).start())
-        self.main.finalizar.clicked.connect(lambda: self.Exit.set())
-        self.main.inserirFile.clicked.connect(self.chooseFile)
+        self.botWindow = Ui_BotWindow()
+        self.bot = self.botWindow.mainForm
+        self.bot.saveSettings.clicked.connect(lambda: Thread(target=self.configs, daemon=True).start())
+        self.bot.iniciar.clicked.connect(lambda: Thread(target=self.operation, daemon=True).start())
+        self.bot.finalizar.clicked.connect(lambda: self.Exit.set())
+        self.bot.inserirFile.clicked.connect(self.chooseFile)
 
         # daemon -> diz que se a thread principal terminar, ele termina tb
         Thread(target=self.hours, daemon=True).start()
@@ -195,14 +195,14 @@ class LoginWindow:
         self.initConfigs()
 
     def pushStopWin(self):
-        self.anim = QPropertyAnimation(self.main.stopWin, b"geometry")
+        self.anim = QPropertyAnimation(self.bot.stopWin, b"geometry")
         self.anim.setDuration(200)
         self.anim.setStartValue(QRect(190,-65, 321,61))
         self.anim.setEndValue(QRect(190,30, 321,61))
         self.anim.start()
 
     def pushStopLoss(self):
-        self.anim = QPropertyAnimation(self.main.stopLoss, b"geometry")
+        self.anim = QPropertyAnimation(self.bot.stopLoss, b"geometry")
         self.anim.setDuration(200)
         self.anim.setStartValue(QRect(190,-65, 321,61))
         self.anim.setEndValue(QRect(190,30, 321,61))
@@ -211,84 +211,84 @@ class LoginWindow:
     def hours(self):
         while True:
             hour = datetime.now().strftime('%H:%M:%S')
-            self.main.horaLine.setText(hour)
-            self.main.saldoLine.setText(str(self.API.get_balance()))
+            self.bot.horaLine.setText(hour)
+            self.bot.saldoLine.setText(str(self.API.get_balance()))
             if self.wins != 0:
                 prct = (self.wins / (self.hits + self.wins)) * 100
                 prct = round(prct, 2)
                 if prct > 0:
-                    self.main.prctLine.setText(f'{prct} %')
+                    self.bot.prctLine.setText(f'{prct} %')
                 else:
-                    self.main.prctLine.setText('0.0 %')
+                    self.bot.prctLine.setText('0.0 %')
 
             sleep(1)
 
     def initConfigs(self):
         entryHour = datetime.now().strftime('%H:%M:%S')
-        self.operationMode = self.API.change_balance(self.main.operationMode.currentText().upper())
-        self.main.winsLine.setText(str(self.wins))
-        self.main.hitsLine.setText(str(self.hits))
-        self.main.prctLine.setText('0.0 %')
-        self.main.output.append(f'[{entryHour}] - Conectado com Sucesso!')
-        self.main.output.append(f'[{entryHour}] - Banca inicial - R${self.API.get_balance()}')
+        self.operationMode = self.API.change_balance(self.bot.operationMode.currentText().upper())
+        self.bot.winsLine.setText(str(self.wins))
+        self.bot.hitsLine.setText(str(self.hits))
+        self.bot.prctLine.setText('0.0 %')
+        self.bot.output.append(f'[{entryHour}] - Conectado com Sucesso!')
+        self.bot.output.append(f'[{entryHour}] - Banca inicial - R${self.API.get_balance()}')
 
     def refreshWins_Hits(self):
-        self.main.winsLine.setText(str(self.wins))
-        self.main.hitsLine.setText(str(self.hits))
+        self.bot.winsLine.setText(str(self.wins))
+        self.bot.hitsLine.setText(str(self.hits))
 
     def configs(self):
         # seta o modo de operação
-        self.operationMode = self.API.change_balance(self.main.operationMode.currentText().upper())
+        self.operationMode = self.API.change_balance(self.bot.operationMode.currentText().upper())
         # seta a banca inicial
         self.bancaInicial = self.API.get_balance()
 
 
         # calcula o valor da entrada:
-        if self.main.entryType.currentText() == 'Valor':
-            self.amount = self.main.entryValue.value()
+        if self.bot.entryType.currentText() == 'Valor':
+            self.amount = self.bot.entryValue.value()
 
-        elif self.main.entryType.currentText() == 'Porcentagem':
-            self.amount = self.main.entryValue.value() / 100
+        elif self.bot.entryType.currentText() == 'Porcentagem':
+            self.amount = self.bot.entryValue.value() / 100
 
 
         # Verifica se vai ser usado StopWin e StopLoss
-        if self.main.stopType.currentText() == 'Valor':
+        if self.bot.stopType.currentText() == 'Valor':
             self.stop = True
-            self.stopWin = float(self.main.stopWinValue.value())
-            self.stopLoss = float(self.main.stopLossValue.value())
+            self.stopWin = float(self.bot.stopWinValue.value())
+            self.stopLoss = float(self.bot.stopLossValue.value())
 
-        elif self.main.stopType.currentText() == 'Porcentagem':
+        elif self.bot.stopType.currentText() == 'Porcentagem':
             self.stop = True
-            self.stopWin = float(self.main.stopWinValue.value()) / 100
-            self.stopLoss = float(self.main.stopLossValue.value()) / 100
+            self.stopWin = float(self.bot.stopWinValue.value()) / 100
+            self.stopLoss = float(self.bot.stopLossValue.value()) / 100
 
-        elif self.main.stopType.currentText() == 'Não Usar':
+        elif self.bot.stopType.currentText() == 'Não Usar':
             self.stop = False
 
 
         # verifica se será usado tendência
-        if self.main.tendenciaCheckBox.isChecked():
+        if self.bot.tendenciaCheckBox.isChecked():
             self.tend = True
-            self.tendCandles = int(self.main.QntdVelasSpinBox.value())
+            self.tendCandles = int(self.bot.QntdVelasSpinBox.value())
         else:
             self.tend = False
 
 
         # seta o valor dos gales
-        self.gale = int(self.main.galeValue.currentText())
+        self.gale = int(self.bot.galeValue.currentText())
 
         # coloca na tela inicial quanto tem na banca
-        self.main.saldoLine.setText(str(self.bancaInicial))
+        self.bot.saldoLine.setText(str(self.bancaInicial))
 
         # mostra que foi salvo com sucesso!
-        self.main.saveLabel.setText('Configurações Salvas com sucesso!')
+        self.bot.saveLabel.setText('Configurações Salvas com sucesso!')
         sleep(2)
-        self.main.saveLabel.setText('')
+        self.bot.saveLabel.setText('')
 
     def chooseFile(self):
         self.arquivo = QtWidgets.QFileDialog.getOpenFileName()[0]
-        self.mainWindow.corrigirSinais(caminho=self.arquivo)
-        self.main.FileWay.setText(self.arquivo)
+        self.botWindow.corrigirSinais(caminho=self.arquivo)
+        self.bot.FileWay.setText(self.arquivo)
 
     def tendencia(self, par:str, timeframe:int):
         velas = self.API.get_candles(par, (int(timeframe) * 60), self.tendCandles, time())
@@ -300,7 +300,7 @@ class LoginWindow:
 
     def outputs(self, outputstring:str):
         hour = datetime.now().strftime('%H:%M:%S')
-        self.main.output.append(f'[{hour}] - {outputstring}')
+        self.bot.output.append(f'[{hour}] - {outputstring}')
 
     def payout(self, par):
         prc = self.API.get_all_profit()
@@ -308,25 +308,28 @@ class LoginWindow:
 
     def operationLabel(self):
         #while not self.Exit.is_set():
-        #   self.main.statusLine.setText('Em Operação')
+        #   self.bot.statusLine.setText('Em Operação')
         #   sleep(0.5)
-        #   self.main.statusLine.setText('Em Operação.')
+        #   self.bot.statusLine.setText('Em Operação.')
         #   sleep(0.5)
-        #   self.main.statusLine.setText('Em Operação. .')
+        #   self.bot.statusLine.setText('Em Operação. .')
         #   sleep(0.5)
-        #   self.main.statusLine.setText('Em Operação. . .')
+        #   self.bot.statusLine.setText('Em Operação. . .')
         #   sleep(0.5)
 
         v = 0.25
         while not self.Exit.is_set():
-            self.main.statusLine.setText('Em Operação ◜')
+            self.bot.statusLine.setText('Em Operação ◜')
             sleep(v)
-            self.main.statusLine.setText('Em Operação ◝')
+            self.bot.statusLine.setText('Em Operação ◝')
             sleep(v)
-            self.main.statusLine.setText('Em Operação ◞')
+            self.bot.statusLine.setText('Em Operação ◞')
             sleep(v)
-            self.main.statusLine.setText('Em Operação ◟')
+            self.bot.statusLine.setText('Em Operação ◟')
             sleep(v)
+        
+        if self.Exit.is_set():
+            self.bot.statusLine.setText('')
 
     def getSleepTime(Self, horaSinal:str):
         sinal = horaSinal
@@ -351,9 +354,9 @@ class LoginWindow:
         return tempoRestanteSeconds
 
     def operation(self):
-        self.main.saveLabel.setText('Operações iniciadas!')
+        self.bot.saveLabel.setText('Operações iniciadas!')
         sleep(2)
-        self.main.saveLabel.setText('')
+        self.bot.saveLabel.setText('')
         os.system('cls')
         
         Thread(target=self.operationLabel, daemon=True).start()
@@ -392,19 +395,19 @@ class LoginWindow:
 
                     if sinalTendencia != str(dados[2]):
                         outputString = f'Ativo [{str(dados[1])}] contra a tendência!'
-                        self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('Contra Tendência!'))
+                        self.bot.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('Contra Tendência!'))
                         self.outputs(outputString)
 
                     elif sinalTendencia == str(dados[2]):
                         outputString = f'Abrindo operação - [{str(dados[1])}] -> {str(dados[2]).upper()}'
                         self.outputs(outputString)
                         Thread(target=self.buy, args=(str(dados[1]), str(dados[2]), int(dados[3]), self.amount, index), daemon=True).start()
-                        self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('Operação aberta'))
+                        self.bot.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('Operação aberta'))
                 else:
                     outputString = f'Abrindo operação - [{str(dados[1])}] -> {str(dados[2]).upper()}'
                     self.outputs(outputString)
                     Thread(target=self.buy, args=(str(dados[1]), str(dados[2]), int(dados[3]), self.amount, index), daemon=True).start()
-                    self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('Operação aberta'))
+                    self.bot.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('Operação aberta'))
 
             index += 1
 
@@ -452,7 +455,7 @@ class LoginWindow:
             if lucro > 0:
                 outputString = f'WIN - [{par}] - Lucro de R$ {round(lucro, 2)}'
                 self.outputs(outputString)
-                self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('WIN'))
+                self.bot.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('WIN'))
                 self.wins += 1
                 self.refreshWins_Hits()
 
@@ -469,27 +472,32 @@ class LoginWindow:
             elif lucro <= 0:
                 outputString = f'LOSS - [{par}] - Perca de R$ {round(lucro, 2)}'
                 self.outputs(outputString)
-                self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('LOSS'))
-                self.hits += 1
-                self.refreshWins_Hits()
 
+                if self.gale == 1 and gale == None:
+                    self.bot.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('LOSS'))
+                    self.hits += 1
+                    self.refreshWins_Hits()
+                
                 if self.gale == 1:
-                    self.buy(par, dir, timeframe, amount = ((self.amount / self.payout(par)) + self.amount), index=index)
+                    self.buy(par, dir, timeframe, amount = ((self.amount / self.payout(par)) + self.amount), index=index, gale=None)
                     
                 elif self.gale == 2:
                     if gale == 1:
                         outputString = f'Executando Martingale - ordem 1 - [{par}] -> {dir.upper()}'
                         self.outputs(outputString)
-                        self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('MARTINGALE 1'))
+                        self.bot.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('MARTINGALE 1'))
                         self.buy(par, dir, timeframe, gale = 2, amount = ((self.amount / self.payout(par)) + self.amount), index=index)
                     
                     elif gale == 2:
                         outputString = f'Executando Martingale - ordem 2 - [{par}] -> {dir.upper()}'
                         self.outputs(outputString)
-                        self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('MARTINGALE 2'))
+                        self.bot.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('MARTINGALE 2'))
                         self.buy(par, dir, timeframe, gale = None, amount = (((((self.amount / self.payout(par)) + self.amount) + self.amount) / self.payout(par)) + self.amount), index=index)
                     
                     else:
+                        self.bot.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('LOSS'))
+                        self.hits += 1
+                        self.refreshWins_Hits()
                         self.amount = self.amount + ((((self.amount / self.payout(par)) + self.amount) + (((((self.amount / self.payout(par)) + self.amount) + self.amount) / self.payout(par)) + self.amount)) + self.amount) / self.payout(par)
                         self.amount = round(self.amount, 2)
 
@@ -500,7 +508,7 @@ class LoginWindow:
                     self.Exit.set()
         except:
             outputString = 'Erro ao adiquirir a Ordem!'
-            self.main.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('Operação Fechada!'))
+            self.bot.tableWidget.setItem(index, 5, QtWidgets.QTableWidgetItem('Operação Fechada!'))
             self.outputs(outputString)
 
 

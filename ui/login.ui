@@ -147,6 +147,9 @@ QPushButton:hover {
      </item>
      <item>
       <widget class="QCheckBox" name="rememberMe">
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
        <property name="styleSheet">
         <string notr="true"/>
        </property>
